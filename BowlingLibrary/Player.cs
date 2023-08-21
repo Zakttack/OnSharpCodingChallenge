@@ -5,25 +5,26 @@ using System.Linq;
 using System.Threading.Tasks;
 using BowlingLibrary.Exceptions;
 using BowlingLibrary.Models;
+using System.Data.SqlTypes;
 
 namespace BowlingLibrary
 {
     public class Player
     {
-        private int frameNumber;
-        private int shotNumber;
+        private Turn turn;
+        private bool hasExtraShot;
         public Player(string name)
         {
             Info = new(name, new Frame[10]);
-            frameNumber = 0;
-            shotNumber = 0;
+            turn = new();
+            hasExtraShot = false;
         }
 
         public Player(string name, Frame[] frames)
         {
             Info = new(name, frames);
-            frameNumber = 0;
-            shotNumber = 0;
+            turn = new();
+            hasExtraShot = false;
         }
 
         public KeyValuePair<string,Frame[]> Info
@@ -56,140 +57,145 @@ namespace BowlingLibrary
         {
             if (pinsKnockedDown < 0)
             {
-                throw new AmountKnockedDownException(pinsKnockedDown, shotNumber);
+                throw new AmountKnockedDownException(pinsKnockedDown, turn.ShotNumber);
             }
-            if (Info.Value[frameNumber] == null)
+            if (Info.Value[turn.FrameNumber] == null)
             {
-                Info.Value[frameNumber] = new(frameNumber == 9);
+                Info.Value[turn.FrameNumber] = new(turn.FrameNumber == 9);
             }
             if (pinsKnockedDown == 0)
             {
-                Info.Value[frameNumber].Shots[shotNumber] = new(pinsKnockedDown)
+                Info.Value[turn.FrameNumber].Shots[turn.ShotNumber] = new(pinsKnockedDown)
                 {
                     Result = '-'
                 };
+                if (turn.FrameNumber == 9 && turn.ShotNumber == 1 && !hasExtraShot)
+                {
+                    turn++;
+                    Info.Value[turn.FrameNumber].Shots[turn.ShotNumber] = new();
+                }
             }
             else
             {
-                switch (shotNumber)
+                switch (turn.ShotNumber)
                 {
                     case 0:
                         if (pinsKnockedDown > 10)
                         {
-                            throw new AmountKnockedDownException(pinsKnockedDown, shotNumber);
+                            throw new AmountKnockedDownException(pinsKnockedDown, turn.ShotNumber);
                         }
                         else if (pinsKnockedDown == 10)
                         {
-                            Info.Value[frameNumber].Shots[shotNumber] = new(pinsKnockedDown)
+                            Info.Value[turn.FrameNumber].Shots[turn.ShotNumber] = new(pinsKnockedDown)
                             {
                                 Result = 'X'
                             };
+                            if (turn.FrameNumber != 9)
+                            {
+                                turn++;
+                                Info.Value[turn.FrameNumber].Shots[turn.ShotNumber] = new();
+                            }
                         }
                         else
                         {
-                            Info.Value[frameNumber].Shots[shotNumber] = new(pinsKnockedDown)
+                            Info.Value[turn.FrameNumber].Shots[turn.ShotNumber] = new(pinsKnockedDown)
                             {
                                 Result = (char)(48 + pinsKnockedDown)
                             };
                         }
                         break;
                     case 1:
-                        Shot previousShot = Info.Value[frameNumber].Shots[shotNumber - 1];
-                        if (frameNumber == 9 && previousShot.Result == 'X')
+                        Shot previousShot = Info.Value[turn.FrameNumber].Shots[turn.ShotNumber - 1];
+                        if (turn.FrameNumber == 9 && previousShot.Result == 'X')
                         {
+                            hasExtraShot = true;
                             if (pinsKnockedDown > 10)
                             {
-                                throw new AmountKnockedDownException(pinsKnockedDown, shotNumber);
+                                throw new AmountKnockedDownException(pinsKnockedDown, turn.ShotNumber);
                             }
                             else if (pinsKnockedDown == 10)
                             {
-                                Info.Value[frameNumber].Shots[shotNumber] = new(pinsKnockedDown)
+                                Info.Value[turn.FrameNumber].Shots[turn.ShotNumber] = new(pinsKnockedDown)
                                 {
                                     Result = 'X'
                                 };
                             }
                             else
                             {
-                                Info.Value[frameNumber].Shots[shotNumber] = new(pinsKnockedDown)
+                                Info.Value[turn.FrameNumber].Shots[turn.ShotNumber] = new(pinsKnockedDown)
                                 {
                                     Result = (char)(48 + pinsKnockedDown)
                                 };
                             }
-                        }
-                        else if (previousShot.Result == 'X')
-                        {
-                            Info.Value[frameNumber].Shots[shotNumber] = new();
                         }
                         else
                         {
                             int totalKnockedDown = previousShot.PinsKnockedDown + pinsKnockedDown;
                             if (totalKnockedDown > 10)
                             {
-                                throw new AmountKnockedDownException(pinsKnockedDown, shotNumber);
+                                throw new AmountKnockedDownException(pinsKnockedDown, turn.ShotNumber);
                             }
                             else if (totalKnockedDown == 10)
                             {
-                                Info.Value[frameNumber].Shots[shotNumber] = new(pinsKnockedDown)
+                                Info.Value[turn.FrameNumber].Shots[turn.ShotNumber] = new(pinsKnockedDown)
                                 {
                                     Result = '/'
                                 };
+                                hasExtraShot = turn.FrameNumber == 9;
                             }
                             else
                             {
-                                Info.Value[frameNumber].Shots[shotNumber] = new(pinsKnockedDown)
+                                Info.Value[turn.FrameNumber].Shots[turn.ShotNumber] = new(pinsKnockedDown)
                                 {
                                     Result = (char)(48 + pinsKnockedDown)
                                 };
+                                if (turn.FrameNumber == 9 && !hasExtraShot)
+                                {
+                                    turn++;
+                                    Info.Value[turn.FrameNumber].Shots[turn.ShotNumber] = new();
+                                }
                             }
                         }
-                        shotNumber++;
                         break;
                     case 2:
-                        if (frameNumber == 9 && Info.Value[frameNumber].Shots[0].Result != 'X' && 
-                            Info.Value[frameNumber].Shots[1].Result != 'X' && 
-                            Info.Value[frameNumber].Shots[1].Result != '/')
-                        {
-                            Info.Value[frameNumber].Shots[shotNumber] = new();
-                        }
-                        else if (frameNumber == 9 && (Info.Value[frameNumber].Shots[1].Result == 'X' ||
-                            Info.Value[frameNumber].Shots[1].Result == '/'))
+                        if (Info.Value[turn.FrameNumber].Shots[1].Result == 'X' || Info.Value[turn.FrameNumber].Shots[1].Result == '/')
                         {
                             if (pinsKnockedDown > 10)
                             {
-                                throw new AmountKnockedDownException(pinsKnockedDown, shotNumber);
+                                throw new AmountKnockedDownException(pinsKnockedDown, turn.ShotNumber);
                             }
                             else if (pinsKnockedDown == 10)
                             {
-                                Info.Value[frameNumber].Shots[shotNumber] = new(pinsKnockedDown)
+                                Info.Value[turn.FrameNumber].Shots[turn.ShotNumber] = new(pinsKnockedDown)
                                 {
                                     Result = 'X'
                                 };
                             }
                             else
                             {
-                                Info.Value[frameNumber].Shots[shotNumber] = new(pinsKnockedDown)
+                                Info.Value[turn.FrameNumber].Shots[turn.ShotNumber] = new(pinsKnockedDown)
                                 {
                                     Result = (char)(48 + pinsKnockedDown)
                                 };
                             }
                         }
-                        else if (frameNumber == 9)
+                        else
                         {
-                            int totalKnockedDown = Info.Value[frameNumber].Shots[shotNumber - 1].PinsKnockedDown + pinsKnockedDown;
+                            int totalKnockedDown = Info.Value[turn.FrameNumber].Shots[turn.ShotNumber - 1].PinsKnockedDown + pinsKnockedDown;
                             if (totalKnockedDown > 10)
                             {
-                                throw new AmountKnockedDownException(pinsKnockedDown, shotNumber);
+                                throw new AmountKnockedDownException(pinsKnockedDown, turn.ShotNumber);
                             }
                             else if (totalKnockedDown == 10)
                             {
-                                Info.Value[frameNumber].Shots[shotNumber] = new(pinsKnockedDown)
+                                Info.Value[turn.FrameNumber].Shots[turn.ShotNumber] = new(pinsKnockedDown)
                                 {
                                     Result = '/'
                                 };
                             }
                             else
                             {
-                                Info.Value[frameNumber].Shots[shotNumber] = new(pinsKnockedDown)
+                                Info.Value[turn.FrameNumber].Shots[turn.ShotNumber] = new(pinsKnockedDown)
                                 {
                                     Result = (char)(48 + pinsKnockedDown)
                                 };
@@ -198,15 +204,7 @@ namespace BowlingLibrary
                         break;
                 }
             }
-            if (shotNumber < Info.Value[frameNumber].Shots.Length)
-            {
-                shotNumber++;
-            }
-            else
-            {
-                frameNumber++;
-                shotNumber = 0;
-            }
+            turn++;
             UpdateScore();
         }
 
@@ -215,29 +213,20 @@ namespace BowlingLibrary
             int f = 0;
             try
             {
-                while (f < frameNumber && f <= 8)
+                while (f < turn.FrameNumber && f <= 8)
                 {
                     Info.Value[f].Score = f == 0 ? 0 : Info.Value[f - 1].Score;
                     if (Info.Value[f].Shots[0].Result == 'X')
                     {
                         Queue<Shot> shots = new();
-                        int f1 = f + 1;
-                        int s = 0;
+                        Turn t = new(f + 1);
                         while (shots.Count < 2)
                         {
-                            if (Info.Value[f1].Shots[s].Result != ' ')
+                            if (Info.Value[t.FrameNumber].Shots[t.ShotNumber].Result != ' ')
                             {
-                                shots.Enqueue(Info.Value[f1].Shots[s]);
+                                shots.Enqueue(Info.Value[t.FrameNumber].Shots[t.ShotNumber]);
                             }
-                            if (s < Info.Value[f1].Shots.Length)
-                            {
-                                s++;
-                            }
-                            else
-                            {
-                                f1++;
-                                s = 0;
-                            }
+                            t++;
                         }
                         Info.Value[f].Score += 10;
                         foreach (Shot shot in shots)
