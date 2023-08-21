@@ -13,21 +13,13 @@ namespace BowlingLibrary
             game = new Dictionary<string,Frame[]>();
         }
 
-        public Player this[string name]
+        public int PlayerCount
         {
             get
             {
-                foreach (KeyValuePair<string,Frame[]> p in game)
-                {
-                    if (p.Key == name)
-                    {
-                        return new(p.Key, p.Value);
-                    }
-                }
-                throw new PlayerNotFoundException(name);
+                return game.Count;
             }
         }
-
         public void AddPlayer(string name)
         {
             try
@@ -35,7 +27,7 @@ namespace BowlingLibrary
                 Player p = new(name);
                 game.Add(p.Info);
             }
-            catch (NotSupportedException ex)
+            catch (ArgumentException ex)
             {
                 throw new PlayerAlreadyExistsException(name, ex);
             }

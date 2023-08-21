@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -25,6 +26,20 @@ namespace BowlingLibrary.Models
             private set;
         }
 
+        public override readonly bool Equals(object obj)
+        {
+            if (obj is not Turn)
+            {
+                return false;
+            }
+            return this == (Turn)obj;
+        }
+
+        public override readonly int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+
         public static Turn operator++(Turn a)
         {
             int shotMax = a.FrameNumber == 9 ? 2 : 1;
@@ -43,6 +58,16 @@ namespace BowlingLibrary.Models
         public static Turn operator--(Turn a)
         {
             throw new InvalidOperationException("Can't go back in Turns");
+        }
+
+        public static bool operator==(Turn a, Turn b)
+        {
+            return a.FrameNumber == b.FrameNumber && a.ShotNumber == b.ShotNumber;
+        }
+
+        public static bool operator!=(Turn a, Turn b)
+        {
+            return a.FrameNumber != b.FrameNumber || a.ShotNumber != b.ShotNumber;
         }
     }
 }

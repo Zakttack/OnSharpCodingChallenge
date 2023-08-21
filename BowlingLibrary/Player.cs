@@ -269,5 +269,30 @@ namespace BowlingLibrary
                 }
             }
         }
+
+        public static bool operator==(Player a, Player b)
+        {
+            return a.Info.Key == b.Info.Key;
+        }
+
+        public static bool operator!=(Player a, Player b)
+        {
+            return a.Info.Key != b.Info.Key;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is not Player)
+            {
+                return false;
+            }
+            Player other = (Player)obj;
+            return this == other;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
     }
 }
