@@ -27,7 +27,7 @@ namespace BowlingLibrary.Models
 
         public static Turn operator++(Turn a)
         {
-            int shotMax = a.FrameNumber == 9 ? 3 : 2;
+            int shotMax = a.FrameNumber == 9 ? 2 : 1;
             if (a.ShotNumber < shotMax)
             {
                 a.ShotNumber++;

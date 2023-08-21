@@ -1,11 +1,5 @@
-using System.Xml.Schema;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using BowlingLibrary.Exceptions;
 using BowlingLibrary.Models;
-using System.Data.SqlTypes;
 
 namespace BowlingLibrary
 {
@@ -254,12 +248,19 @@ namespace BowlingLibrary
             }
             finally
             {
-                if (f == 9)
+                if (f == 9 && Info.Value[f] != null)
                 {
                     Info.Value[f].Score = Info.Value[f-1].Score;
                     foreach (Shot shot in Info.Value[f].Shots)
                     {
-                        Info.Value[f].Score += shot.PinsKnockedDown;
+                        try
+                        {
+                            Info.Value[f].Score += shot.PinsKnockedDown;
+                        }
+                        catch (NullReferenceException)
+                        {
+                            Info.Value[f].Score += 0;
+                        }
                     }
                 }
             }
