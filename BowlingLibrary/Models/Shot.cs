@@ -2,11 +2,6 @@ namespace BowlingLibrary.Models
 {
     public class Shot
     {
-        public Shot()
-        {
-            PinsKnockedDown = 0;
-            Result = ' ';
-        }
         public Shot(int pinsKnockedDown)
         {
             PinsKnockedDown = pinsKnockedDown;
@@ -23,6 +18,14 @@ namespace BowlingLibrary.Models
         {
             get;
             set;
+        }
+
+        public static Shot Empty
+        {
+            get
+            {
+                return new(0);
+            }
         }
     }
 }

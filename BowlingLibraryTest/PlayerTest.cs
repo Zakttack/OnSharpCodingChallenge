@@ -3,7 +3,7 @@ using BowlingLibrary.Models;
 using BowlingLibrary.Exceptions;
 namespace BowlingLibraryTest
 {
-    public class Tests
+    public class PlayerTest
     {
         private Player player;
         [SetUp]
@@ -55,6 +55,15 @@ namespace BowlingLibraryTest
             Shot shot = first.Shots[0];
             Assert.That(shot.PinsKnockedDown, Is.EqualTo(10));
             Assert.That(shot.Result, Is.EqualTo('X'));
+        }
+
+        [Test]
+        public void VerifyEmptyAfterStrike()
+        {
+            player.Bowl(10);
+            Frame first = player.Info.Value[0];
+            Shot shot = first.Shots[1];
+            
         }
 
         [Test]

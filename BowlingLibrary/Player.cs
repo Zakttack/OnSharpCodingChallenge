@@ -72,7 +72,7 @@ namespace BowlingLibrary
                 if (turn.FrameNumber == 9 && turn.ShotNumber == 1 && !hasExtraShot)
                 {
                     turn++;
-                    Info.Value[turn.FrameNumber].Shots[turn.ShotNumber] = new();
+                    Info.Value[turn.FrameNumber].Shots[turn.ShotNumber] = Shot.Empty;
                 }
             }
             else
@@ -93,7 +93,7 @@ namespace BowlingLibrary
                             if (turn.FrameNumber != 9)
                             {
                                 turn++;
-                                Info.Value[turn.FrameNumber].Shots[turn.ShotNumber] = new();
+                                Info.Value[turn.FrameNumber].Shots[turn.ShotNumber] = Shot.Empty;
                             }
                         }
                         else
@@ -152,7 +152,7 @@ namespace BowlingLibrary
                                 if (turn.FrameNumber == 9 && !hasExtraShot)
                                 {
                                     turn++;
-                                    Info.Value[turn.FrameNumber].Shots[turn.ShotNumber] = new();
+                                    Info.Value[turn.FrameNumber].Shots[turn.ShotNumber] = Shot.Empty;
                                 }
                             }
                         }
