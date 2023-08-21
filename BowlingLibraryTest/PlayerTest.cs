@@ -162,5 +162,73 @@ namespace BowlingLibraryTest
             player.Bowl(0);
             Assert.That(player.Info.Value[9].Score, Is.EqualTo(82));
         }
+
+        [Test]
+        public void TestSpareScoringInTenthFrame()
+        {
+            player.Bowl(10);
+            player.Bowl(1);
+            player.Bowl(5);
+            Assert.That(player.Info.Value[0].Score, Is.EqualTo(16));
+            Assert.That(player.Info.Value[1].Score, Is.EqualTo(22));
+            player.Bowl(6);
+            player.Bowl(4);
+            player.Bowl(0);
+            Assert.That(player.Info.Value[2].Score, Is.EqualTo(32));
+            player.Bowl(0);
+            Assert.That(player.Info.Value[3].Score, Is.EqualTo(32));
+            player.Bowl(3);
+            player.Bowl(2);
+            Assert.That(player.Info.Value[4].Score, Is.EqualTo(37));
+            player.Bowl(10);
+            player.Bowl(7);
+            player.Bowl(3);
+            Assert.That(player.Info.Value[5].Score, Is.EqualTo(57));
+            player.Bowl(1);
+            Assert.That(player.Info.Value[6].Score, Is.EqualTo(68));
+            player.Bowl(1);
+            Assert.That(player.Info.Value[7].Score, Is.EqualTo(70));
+            player.Bowl(2);
+            player.Bowl(4);
+            Assert.That(player.Info.Value[8].Score, Is.EqualTo(76));
+            player.Bowl(6);
+            player.Bowl(4);
+            player.Bowl(2);
+            Assert.That(player.Info.Value[9].Score, Is.EqualTo(88));
+        }
+
+        [Test]
+        public void TestStrikeScoringInTenthFrame()
+        {
+            player.Bowl(10);
+            player.Bowl(1);
+            player.Bowl(5);
+            Assert.That(player.Info.Value[0].Score, Is.EqualTo(16));
+            Assert.That(player.Info.Value[1].Score, Is.EqualTo(22));
+            player.Bowl(6);
+            player.Bowl(4);
+            player.Bowl(0);
+            Assert.That(player.Info.Value[2].Score, Is.EqualTo(32));
+            player.Bowl(0);
+            Assert.That(player.Info.Value[3].Score, Is.EqualTo(32));
+            player.Bowl(3);
+            player.Bowl(2);
+            Assert.That(player.Info.Value[4].Score, Is.EqualTo(37));
+            player.Bowl(10);
+            player.Bowl(7);
+            player.Bowl(3);
+            Assert.That(player.Info.Value[5].Score, Is.EqualTo(57));
+            player.Bowl(1);
+            Assert.That(player.Info.Value[6].Score, Is.EqualTo(68));
+            player.Bowl(1);
+            Assert.That(player.Info.Value[7].Score, Is.EqualTo(70));
+            player.Bowl(2);
+            player.Bowl(4);
+            Assert.That(player.Info.Value[8].Score, Is.EqualTo(76));
+            player.Bowl(10);
+            player.Bowl(0);
+            player.Bowl(2);
+            Assert.That(player.Info.Value[9].Score, Is.EqualTo(88));
+        }
     }
 }

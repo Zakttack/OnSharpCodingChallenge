@@ -89,6 +89,10 @@ namespace BowlingLibrary
                                 turn++;
                                 Info.Value[turn.FrameNumber].Shots[turn.ShotNumber] = Shot.Empty;
                             }
+                            else
+                            {
+                                hasExtraShot = true;
+                            }
                         }
                         else
                         {
