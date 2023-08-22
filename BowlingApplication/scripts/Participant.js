@@ -42,7 +42,7 @@ function startGame() {
                 throw new Error(text)
             });
         }
-        window.location.href = '/BowlingGame.cshtml';
+        window.location.href = '/BowlingGame';
     })
     .catch(error => {
         document.getElementById('playerEmptyError').textContent = error.message;

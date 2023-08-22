@@ -280,12 +280,40 @@ namespace BowlingLibrary
 
         public static bool operator==(Player a, Player b)
         {
-            return a.Info.Key == b.Info.Key;
+            try
+            {
+                return a.Equals(b);
+            }
+            catch (NullReferenceException)
+            {
+                try
+                {
+                    return b.Equals(a);
+                }
+                catch (NullReferenceException)
+                {
+                    return true;
+                }
+            }
         }
 
         public static bool operator!=(Player a, Player b)
         {
-            return a.Info.Key != b.Info.Key;
+            try
+            {
+                return !a.Equals(b);
+            }
+            catch (NullReferenceException)
+            {
+                try
+                {
+                    return !b.Equals(a);
+                }
+                catch (NullReferenceException)
+                {
+                    return false;
+                }
+            }
         }
 
         public override bool Equals(object obj)
@@ -295,7 +323,7 @@ namespace BowlingLibrary
                 return false;
             }
             Player other = (Player)obj;
-            return this == other;
+            return Info.Key == other.Info.Key;
         }
 
         public override int GetHashCode()
