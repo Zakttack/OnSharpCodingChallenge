@@ -1,0 +1,13 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div>
+    <h1>Welcome to Bowling</h1>
+    <p>Enter Player: <input type="text" id="playerNameInput" name="playerNameInput" value=""/></p>
+    <button id="addPlayerButton" name="addPlayerButton" onclick="handleText()">Add Player</button>
+    <h2>Players Selected</h2>
+</div>
+<script src="~/scripts/Participant.js"></script>
