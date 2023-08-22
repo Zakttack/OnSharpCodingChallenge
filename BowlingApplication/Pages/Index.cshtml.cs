@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BowlingLibrary;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace BowlingApplication.Pages
@@ -14,7 +15,12 @@ namespace BowlingApplication.Pages
 
         public IActionResult OnPost()
         {
-            return Redirect("BowlingGame");
+            IList<Player> bowlers = Service.Players.ToList();
+            if (bowlers.Count > 0)
+            {
+                return Redirect("BowlingGame");
+            }
+            return StatusCode(400, "No bowlers are playing.");
         }
     }
 }
