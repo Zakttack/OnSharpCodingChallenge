@@ -1,13 +1,22 @@
 ﻿@page
+@using BowlingApplication
+@using BowlingLibrary
 @model IndexModel
 @{
     ViewData["Title"] = "Home page";
 }
-
+<link rel="stylesheet" href="~/styles/participant.css">
 <div>
     <h1>Welcome to Bowling</h1>
     <p>Enter Player: <input type="text" id="playerNameInput" name="playerNameInput" value=""/></p>
     <button id="addPlayerButton" name="addPlayerButton" onclick="handleText()">Add Player</button>
+    <p id="addPlayerError"></p>
     <h2>Players Selected</h2>
+    <ol id="playersList">
+        @foreach (Player player in Service.Players)
+        {
+            <li>@player.Info.Key</li>
+        }
+    </ol>
 </div>
 <script src="~/scripts/Participant.js"></script>

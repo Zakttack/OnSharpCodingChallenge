@@ -1,10 +1,16 @@
 using BowlingApplication;
 using Microsoft.Extensions.FileProviders;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+// builder.Services.AddControllers()
+//     .AddJsonOptions(options =>
+//     {
+//         options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+//     });
 
 var app = builder.Build();
 
@@ -41,7 +47,5 @@ app.UseEndpoints(endpoints =>
 });
 
 app.MapRazorPages();
-
-app.Run();
-
 Service.Players = new();
+app.Run();

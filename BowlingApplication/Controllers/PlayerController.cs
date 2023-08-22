@@ -1,4 +1,6 @@
 using BowlingApplication.Models;
+using BowlingLibrary;
+using BowlingLibrary.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 namespace BowlingApplication.Controllers
 {
@@ -16,8 +18,15 @@ namespace BowlingApplication.Controllers
         [Route("AddPlayer")]
         public IActionResult AddPlayer(PlayerNameInput request)
         {
-            Service.Players.AddPlayer(request.Text);
-            return Ok();
+            try
+            {
+                Service.Players.AddPlayer(request.Text);
+                return Ok();
+            }
+            catch (PlayerAlreadyExistsException ex)
+            {
+                return StatusCode(400,ex.Message);
+            }
         }
     }
 }
