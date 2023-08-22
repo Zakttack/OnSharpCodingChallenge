@@ -2,7 +2,3 @@
 */bin
 */obj
 /.vscode
-/BowlingApplication/appsettings.Development.json
-/BowlingApplication/ClientApp/package-lock.json
-/BowlingApplication/ClientApp/node_modules
-/BowlingApplication/ClientApp/.env.development.local
