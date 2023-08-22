@@ -1,3 +1,3 @@
-#addPlayerError {
+#addPlayerError, #playerEmptyError {
     color: red;
 }

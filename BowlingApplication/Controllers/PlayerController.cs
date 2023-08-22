@@ -28,5 +28,12 @@ namespace BowlingApplication.Controllers
                 return StatusCode(400,ex.Message);
             }
         }
+
+        [HttpPost]
+        [Route("VerifyNonEmptyPlayers")]
+        public IActionResult VerifyNonEmptyPlayers()
+        {
+            return Service.Players.ToList().Count > 0 ? Ok() : StatusCode(400, "No Players are Bowling.");
+        }
     }
 }
