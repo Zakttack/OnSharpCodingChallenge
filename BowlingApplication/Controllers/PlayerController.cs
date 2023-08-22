@@ -1,5 +1,4 @@
 using BowlingApplication.Models;
-using BowlingLibrary;
 using BowlingLibrary.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 namespace BowlingApplication.Controllers
