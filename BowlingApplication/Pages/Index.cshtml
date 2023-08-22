@@ -6,10 +6,10 @@
     ViewData["Title"] = "Home page";
 }
 <link rel="stylesheet" href="~/styles/participant.css">
-<div>
+<form method="post">
     <h1>Welcome to Bowling</h1>
     <p>Enter Player: <input type="text" id="playerNameInput" name="playerNameInput" value=""/></p>
-    <button id="addPlayerButton" name="addPlayerButton" onclick="handleText()">Add Player</button>
+    <button onclick="handleText()">Add Player</button>
     <p id="addPlayerError"></p>
     <h2>Players Selected</h2>
     <ol id="playersList">
@@ -18,5 +18,6 @@
             <li>@player.Info.Key</li>
         }
     </ol>
-</div>
+    <button type="submit">Play</button>
+</form>
 <script src="~/scripts/Participant.js"></script>
