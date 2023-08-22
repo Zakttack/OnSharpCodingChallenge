@@ -26,6 +26,14 @@ namespace BowlingLibrary.Models
             private set;
         }
 
+        public static Turn Complete
+        {
+            get
+            {
+                return new(10,0);
+            }
+        }
+
         public override readonly bool Equals(object obj)
         {
             if (obj is not Turn)

@@ -1,0 +1,64 @@
+@page
+@using BowlingLibrary
+@using BowlingLibrary.Models
+@model BowlingApplication.Pages.BowlingGame
+@{
+    ViewData["Title"] = "BowlingGame";
+    Player player = Service.Players.ToList()[Service.CurrentIndex];
+}
+<link rel="stylesheet" href="~/styles/bowlingGame.css">
+@if(player.TurnStatus.FrameNumber < 10)
+{
+    Player other = Service.ChooseRandom();
+    if (other != null)
+    {
+        if (player.TurnStatus.FrameNumber == other.TurnStatus.FrameNumber)
+        {
+            <div>
+                <h1>Frame @player.TurnStatus.FrameNumber Shot @player.TurnStatus.ShotNumber for 
+                    @player.Info.Key</h1>
+                <select id="pinsKnockedDownInput">
+                    <option value=-1>Enter how many pins knocked down</option>
+                    <option value=0>0</option>
+                    <option value=1>1</option>
+                    <option value=2>2</option>
+                    <option value=3>3</option>
+                    <option value=4>4</option>
+                    <option value=5>5</option>
+                    <option value=6>6</option>
+                    <option value=7>7</option>
+                    <option value=8>8</option>
+                    <option value=9>9</option>
+                    <option value=10>10</option>
+                </select>
+                <button onclick="handleBowl()">Bowl</button>
+                <p id="pinsKnockedDownError"></p>
+            </div>
+        }
+        else
+        {
+            Service.CurrentIndex++;
+        }
+    }
+    else
+    {
+        Service.CurrentIndex = 0;
+    }
+}
+else
+{
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Score</th>
+        </tr>
+        @foreach (Player p in Service.Players)
+        {
+            <tr>
+                <td>@p.Info.Key</td>
+                <td>@p.Score</td>
+            </tr>
+        }
+    </table>
+}
+<script src="~/script/BowlingGame.js"></script>

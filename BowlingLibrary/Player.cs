@@ -47,6 +47,14 @@ namespace BowlingLibrary
             }
         }
 
+        public Turn TurnStatus
+        {
+            get
+            {
+                return turn;
+            }
+        }
+
         public void Bowl(int pinsKnockedDown)
         {
             if (pinsKnockedDown < 0)

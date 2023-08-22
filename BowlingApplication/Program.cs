@@ -1,6 +1,5 @@
 using BowlingApplication;
 using Microsoft.Extensions.FileProviders;
-using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -48,4 +47,5 @@ app.UseEndpoints(endpoints =>
 
 app.MapRazorPages();
 Service.Players = new();
+Service.CurrentIndex = 0;
 app.Run();
