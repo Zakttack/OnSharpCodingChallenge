@@ -34,7 +34,8 @@ namespace BowlingLibrary.Models
             {
                 return false;
             }
-            return this == (Shot)obj;
+            Shot other = (Shot)obj;
+            return PinsKnockedDown == other.PinsKnockedDown && Result == other.Result;
         }
 
         public override int GetHashCode()
@@ -44,12 +45,40 @@ namespace BowlingLibrary.Models
 
         public static bool operator==(Shot a, Shot b)
         {
-            return a.PinsKnockedDown == b.PinsKnockedDown && a.Result == b.Result;
+            try
+            {
+                return a.Equals(b);
+            }
+            catch (NullReferenceException)
+            {
+                try
+                {
+                    return b.Equals(a);
+                }
+                catch (NullReferenceException)
+                {
+                    return true;
+                }
+            }
         }
 
         public static bool operator!=(Shot a, Shot b)
         {
-            return a.PinsKnockedDown != b.PinsKnockedDown || a.Result != b.Result;
+            try
+            {
+                return !a.Equals(b);
+            }
+            catch (NullReferenceException)
+            {
+                try
+                {
+                    return !b.Equals(a);
+                }
+                catch (NullReferenceException)
+                {
+                    return false;
+                }
+            }
         }
     }
 }
