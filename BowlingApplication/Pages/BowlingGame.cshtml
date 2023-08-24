@@ -38,11 +38,13 @@
         else
         {
             Service.CurrentIndex++;
+            RedirectToPage("BowlingGame");
         }
     }
     else
     {
         Service.CurrentIndex = 0;
+        RedirectToPage("BowlingGame");
     }
 }
 else
