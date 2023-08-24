@@ -5,19 +5,16 @@ namespace BowlingLibrary
 {
     public class Player
     {
-        private Turn turn;
         private bool hasExtraShot;
         public Player(string name)
         {
             Info = new(name, new Frame[10]);
-            turn = new();
             hasExtraShot = false;
         }
 
         public Player(string name, Frame[] frames)
         {
             Info = new(name, frames);
-            turn = new();
             hasExtraShot = false;
         }
 
@@ -31,16 +28,11 @@ namespace BowlingLibrary
         {
             get
             {
-                int i = 9;
-                while (i > 0)
+                for (int f = 9; f >= 0; f--)
                 {
-                    try
+                    if (Info.Value[f] != null)
                     {
-                        return Info.Value[i].Score;
-                    }
-                    catch(SystemException)
-                    {
-                        i--;
+                        return Info.Value[f].Score;
                     }
                 }
                 return 0;
@@ -51,7 +43,21 @@ namespace BowlingLibrary
         {
             get
             {
-                return turn;
+                for (int f = 0; f < Info.Value.Length; f++)
+                {
+                    if (Info.Value[f] == null)
+                    {
+                        return new(f);
+                    }
+                    for (int s = 0; s < Info.Value[f].Shots.Length; s++)
+                    {
+                        if (Info.Value[f].Shots[s] == null)
+                        {
+                            return new(f,s);
+                        }
+                    }
+                }
+                return Turn.Complete;
             }
         }
 
@@ -59,43 +65,41 @@ namespace BowlingLibrary
         {
             if (pinsKnockedDown < 0)
             {
-                throw new AmountKnockedDownException(pinsKnockedDown, turn.ShotNumber);
+                throw new AmountKnockedDownException(pinsKnockedDown, TurnStatus.ShotNumber);
             }
-            if (Info.Value[turn.FrameNumber] == null)
+            if (Info.Value[TurnStatus.FrameNumber] == null)
             {
-                Info.Value[turn.FrameNumber] = new(turn.FrameNumber == 9);
+                Info.Value[TurnStatus.FrameNumber] = new(TurnStatus.FrameNumber == 9);
             }
             if (pinsKnockedDown == 0)
             {
-                Info.Value[turn.FrameNumber].Shots[turn.ShotNumber] = new(pinsKnockedDown)
+                Info.Value[TurnStatus.FrameNumber].Shots[TurnStatus.ShotNumber] = new(pinsKnockedDown)
                 {
                     Result = '-'
                 };
-                if (turn.FrameNumber == 9 && turn.ShotNumber == 1 && !hasExtraShot)
+                if (TurnStatus.FrameNumber == 9 && TurnStatus.ShotNumber == 1 && !hasExtraShot)
                 {
-                    turn++;
-                    Info.Value[turn.FrameNumber].Shots[turn.ShotNumber] = Shot.Empty;
+                    EndFrame();
                 }
             }
             else
             {
-                switch (turn.ShotNumber)
+                switch (TurnStatus.ShotNumber)
                 {
                     case 0:
                         if (pinsKnockedDown > 10)
                         {
-                            throw new AmountKnockedDownException(pinsKnockedDown, turn.ShotNumber);
+                            throw new AmountKnockedDownException(pinsKnockedDown, TurnStatus.ShotNumber);
                         }
                         else if (pinsKnockedDown == 10)
                         {
-                            Info.Value[turn.FrameNumber].Shots[turn.ShotNumber] = new(pinsKnockedDown)
+                            Info.Value[TurnStatus.FrameNumber].Shots[TurnStatus.ShotNumber] = new(pinsKnockedDown)
                             {
                                 Result = 'X'
                             };
-                            if (turn.FrameNumber != 9)
+                            if (TurnStatus.FrameNumber != 9)
                             {
-                                turn++;
-                                Info.Value[turn.FrameNumber].Shots[turn.ShotNumber] = Shot.Empty;
+                                EndFrame();
                             }
                             else
                             {
@@ -104,31 +108,31 @@ namespace BowlingLibrary
                         }
                         else
                         {
-                            Info.Value[turn.FrameNumber].Shots[turn.ShotNumber] = new(pinsKnockedDown)
+                            Info.Value[TurnStatus.FrameNumber].Shots[TurnStatus.ShotNumber] = new(pinsKnockedDown)
                             {
                                 Result = (char)(48 + pinsKnockedDown)
                             };
                         }
                         break;
                     case 1:
-                        Shot previousShot = Info.Value[turn.FrameNumber].Shots[turn.ShotNumber - 1];
-                        if (turn.FrameNumber == 9 && previousShot.Result == 'X')
+                        Shot previousShot = Info.Value[TurnStatus.FrameNumber].Shots[TurnStatus.ShotNumber - 1];
+                        if (TurnStatus.FrameNumber == 9 && previousShot.Result == 'X')
                         {
                             hasExtraShot = true;
                             if (pinsKnockedDown > 10)
                             {
-                                throw new AmountKnockedDownException(pinsKnockedDown, turn.ShotNumber);
+                                throw new AmountKnockedDownException(pinsKnockedDown, TurnStatus.ShotNumber);
                             }
                             else if (pinsKnockedDown == 10)
                             {
-                                Info.Value[turn.FrameNumber].Shots[turn.ShotNumber] = new(pinsKnockedDown)
+                                Info.Value[TurnStatus.FrameNumber].Shots[TurnStatus.ShotNumber] = new(pinsKnockedDown)
                                 {
                                     Result = 'X'
                                 };
                             }
                             else
                             {
-                                Info.Value[turn.FrameNumber].Shots[turn.ShotNumber] = new(pinsKnockedDown)
+                                Info.Value[TurnStatus.FrameNumber].Shots[TurnStatus.ShotNumber] = new(pinsKnockedDown)
                                 {
                                     Result = (char)(48 + pinsKnockedDown)
                                 };
@@ -139,47 +143,46 @@ namespace BowlingLibrary
                             int totalKnockedDown = previousShot.PinsKnockedDown + pinsKnockedDown;
                             if (totalKnockedDown > 10)
                             {
-                                throw new AmountKnockedDownException(pinsKnockedDown, turn.ShotNumber);
+                                throw new AmountKnockedDownException(pinsKnockedDown, TurnStatus.ShotNumber);
                             }
                             else if (totalKnockedDown == 10)
                             {
-                                Info.Value[turn.FrameNumber].Shots[turn.ShotNumber] = new(pinsKnockedDown)
+                                Info.Value[TurnStatus.FrameNumber].Shots[TurnStatus.ShotNumber] = new(pinsKnockedDown)
                                 {
                                     Result = '/'
                                 };
-                                hasExtraShot = turn.FrameNumber == 9;
+                                hasExtraShot = TurnStatus.FrameNumber == 9;
                             }
                             else
                             {
-                                Info.Value[turn.FrameNumber].Shots[turn.ShotNumber] = new(pinsKnockedDown)
+                                Info.Value[TurnStatus.FrameNumber].Shots[TurnStatus.ShotNumber] = new(pinsKnockedDown)
                                 {
                                     Result = (char)(48 + pinsKnockedDown)
                                 };
-                                if (turn.FrameNumber == 9 && !hasExtraShot)
+                                if (TurnStatus.FrameNumber == 9 && TurnStatus.ShotNumber == 1 && !hasExtraShot)
                                 {
-                                    turn++;
-                                    Info.Value[turn.FrameNumber].Shots[turn.ShotNumber] = Shot.Empty;
+                                    EndFrame();
                                 }
                             }
                         }
                         break;
                     case 2:
-                        if (Info.Value[turn.FrameNumber].Shots[1].Result == 'X' || Info.Value[turn.FrameNumber].Shots[1].Result == '/')
+                        if (Info.Value[TurnStatus.FrameNumber].Shots[1].Result == 'X' || Info.Value[TurnStatus.FrameNumber].Shots[1].Result == '/')
                         {
                             if (pinsKnockedDown > 10)
                             {
-                                throw new AmountKnockedDownException(pinsKnockedDown, turn.ShotNumber);
+                                throw new AmountKnockedDownException(pinsKnockedDown, TurnStatus.ShotNumber);
                             }
                             else if (pinsKnockedDown == 10)
                             {
-                                Info.Value[turn.FrameNumber].Shots[turn.ShotNumber] = new(pinsKnockedDown)
+                                Info.Value[TurnStatus.FrameNumber].Shots[TurnStatus.ShotNumber] = new(pinsKnockedDown)
                                 {
                                     Result = 'X'
                                 };
                             }
                             else
                             {
-                                Info.Value[turn.FrameNumber].Shots[turn.ShotNumber] = new(pinsKnockedDown)
+                                Info.Value[TurnStatus.FrameNumber].Shots[TurnStatus.ShotNumber] = new(pinsKnockedDown)
                                 {
                                     Result = (char)(48 + pinsKnockedDown)
                                 };
@@ -187,21 +190,21 @@ namespace BowlingLibrary
                         }
                         else
                         {
-                            int totalKnockedDown = Info.Value[turn.FrameNumber].Shots[turn.ShotNumber - 1].PinsKnockedDown + pinsKnockedDown;
+                            int totalKnockedDown = Info.Value[TurnStatus.FrameNumber].Shots[TurnStatus.ShotNumber - 1].PinsKnockedDown + pinsKnockedDown;
                             if (totalKnockedDown > 10)
                             {
-                                throw new AmountKnockedDownException(pinsKnockedDown, turn.ShotNumber);
+                                throw new AmountKnockedDownException(pinsKnockedDown, TurnStatus.ShotNumber);
                             }
                             else if (totalKnockedDown == 10)
                             {
-                                Info.Value[turn.FrameNumber].Shots[turn.ShotNumber] = new(pinsKnockedDown)
+                                Info.Value[TurnStatus.FrameNumber].Shots[TurnStatus.ShotNumber] = new(pinsKnockedDown)
                                 {
                                     Result = '/'
                                 };
                             }
                             else
                             {
-                                Info.Value[turn.FrameNumber].Shots[turn.ShotNumber] = new(pinsKnockedDown)
+                                Info.Value[TurnStatus.FrameNumber].Shots[TurnStatus.ShotNumber] = new(pinsKnockedDown)
                                 {
                                     Result = (char)(48 + pinsKnockedDown)
                                 };
@@ -210,8 +213,12 @@ namespace BowlingLibrary
                         break;
                 }
             }
-            turn++;
             UpdateScore();
+        }
+
+        private void EndFrame()
+        {
+            Info.Value[TurnStatus.FrameNumber].Shots[TurnStatus.ShotNumber] = Shot.Empty;
         }
 
         private void UpdateScore()
@@ -219,7 +226,7 @@ namespace BowlingLibrary
             int f = 0;
             try
             {
-                while (f < turn.FrameNumber && f <= 8)
+                while (f < TurnStatus.FrameNumber && f <= 8)
                 {
                     Info.Value[f].Score = f == 0 ? 0 : Info.Value[f - 1].Score;
                     if (Info.Value[f].Shots[0].Result == 'X')
