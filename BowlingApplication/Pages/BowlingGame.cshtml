@@ -9,10 +9,9 @@
 <link rel="stylesheet" href="~/styles/bowlingGame.css">
 @if(player.TurnStatus.FrameNumber < 10)
 {
-    Player other = Service.ChooseRandom();
-    if (other != null)
+    if (!Service.HaveSameFrameNumber || Service.CurrentIndex == 0)
     {
-        if (player.TurnStatus.FrameNumber == other.TurnStatus.FrameNumber)
+        if (!Service.PlayerHasRolled || (Service.PlayerHasRolled && player.TurnStatus.ShotNumber > 0))
         {
             <div>
                 <h1>Frame @player.TurnStatus.FrameNumber Shot @player.TurnStatus.ShotNumber for 
@@ -38,13 +37,19 @@
         else
         {
             Service.CurrentIndex++;
-            RedirectToPage("BowlingGame");
+            Service.PlayerHasRolled = false;
+            <script>
+                location.reload(true);
+            </script>
         }
     }
     else
     {
         Service.CurrentIndex = 0;
-        RedirectToPage("BowlingGame");
+        Service.PlayerHasRolled = false;
+        <script>
+            location.reload(true);
+        </script>
     }
 }
 else

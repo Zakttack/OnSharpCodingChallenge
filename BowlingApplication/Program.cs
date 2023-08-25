@@ -56,4 +56,5 @@ app.UseEndpoints(endpoints =>
 app.MapRazorPages();
 Service.Players = new();
 Service.CurrentIndex = 0;
+Service.PlayerHasRolled = false;
 app.Run();

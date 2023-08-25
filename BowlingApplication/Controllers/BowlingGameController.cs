@@ -15,6 +15,7 @@ namespace BowlingApplication.Controllers
             try
             {
                 Service.Players.ToList()[Service.CurrentIndex].Bowl(request.Value);
+                Service.PlayerHasRolled = true;
                 return Ok();
             }
             catch (AmountKnockedDownException ex)

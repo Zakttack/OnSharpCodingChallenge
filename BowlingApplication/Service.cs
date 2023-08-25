@@ -23,20 +23,27 @@ namespace BowlingApplication
             set;
         }
 
-        public static Player ChooseRandom()
+        public static bool PlayerHasRolled
         {
-            IList<Player> bowlers = Players.ToList();
-            if (CurrentIndex == bowlers.Count - 1)
+            get;
+            set;
+        }
+
+        public static bool HaveSameFrameNumber
+        {
+            get
             {
-                return null;
+                IList<Player> bowlers = Players.ToList();
+                int frameNumber = bowlers[0].TurnStatus.FrameNumber;
+                for (int i = 1; i < bowlers.Count; i++)
+                {
+                    if (bowlers[i].TurnStatus.FrameNumber != frameNumber)
+                    {
+                        return false;
+                    }
+                }
+                return true;
             }
-            Random randPlayer = new();
-            int index;
-            do
-            {
-                index = randPlayer.Next(bowlers.Count);
-            } while (index <= CurrentIndex);
-            return bowlers[index];
         }
     }
 }
